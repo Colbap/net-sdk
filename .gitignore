@@ -8,3 +8,5 @@ test-results
 node_modules
 *.suo
 packages
+mockapi.pid
+*.DotSettings.user

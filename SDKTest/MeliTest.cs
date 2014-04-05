@@ -1,8 +1,5 @@
-using System;
 using NUnit.Framework;
 using System.Net;
-using System.IO;
-using System.Collections.Specialized;
 using RestSharp;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express');
 var fs = require('fs');
 
 var app = express.createServer();
@@ -107,4 +107,4 @@ app.get('/echo/user_agent',function(req,res) {
 
 app.listen(3000);
 
-fs.writeFileSync('/tmp/mockapi.pid', process.pid);
+fs.writeFileSync('./mockapi.pid', process.pid);
