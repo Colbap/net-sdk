@@ -1,3 +1,8 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using System.Net;
 using RestSharp;
@@ -8,7 +13,7 @@ namespace MercadoLibre.SDK.Test
 	[TestFixture]
 	public class MeliTest
 	{
-		[Test]
+        [Test]
 		public void GetAuthUrl ()
 		{
 			Meli m = new Meli (123456, "client secret");
@@ -195,5 +200,55 @@ namespace MercadoLibre.SDK.Test
 			var response = m.Get ("/echo/user_agent");
 			Assert.AreEqual (HttpStatusCode.OK, response.StatusCode);
 	    }
+
+	    [TestFixtureSetUp]
+	    public void StartServer()
+	    {
+            MockApiServer.Start();
+	    }
+
+	    [TestFixtureTearDown]
+	    public void StopServer()
+	    {
+            MockApiServer.Stop();
+	    }
 	}
+
+    public class MockApiServer
+    {
+        public static void Start()
+        {
+            ExecuteProcess("mockapi-start.bat");
+        }
+
+        public static void Stop()
+        {
+            ExecuteProcess("mockapi-stop.bat");
+        }
+
+        private static void ExecuteProcess(string fileName)
+        {
+            Process myProcess = new Process();
+            try
+            {
+                //myProcess.StartInfo.UseShellExecute = false;
+                //myProcess.StartInfo.CreateNoWindow = false;
+                myProcess.StartInfo.FileName = GetMockApiDirectoryName() + "\\"+ fileName;
+                myProcess.StartInfo.WorkingDirectory = GetMockApiDirectoryName();
+                myProcess.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        private static string GetMockApiDirectoryName()
+        {
+            var location = Assembly.GetAssembly(typeof (MockApiServer)).Location;
+            var directory = Directory.GetParent(location); //new DirectoryInfo(location);
+            var parentDirectory = directory.Parent.Parent.Parent; //"SDKTest\bin\Debug\";
+            return parentDirectory.GetDirectories("mockapi").First().FullName; //".\mockapi\
+        }
+    }
 }
